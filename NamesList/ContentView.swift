@@ -13,7 +13,20 @@ struct ContentView: View {
     @State private var imagesList = [Data?]()
     
     var body: some View {
-        Text("New app")
+        VStack {
+            PhotosPicker("Select a picture", selection: $pickerItem, matching: .images)
+            ForEach(imagesList, id: \.self){ photo in
+                Image(uiImage: UIImage(data: photo!)!)
+                    .resizable()
+                    .scaledToFit()
+            }
+        }
+        .onChange(of: pickerItem) {
+            Task{
+                selectedImage = try await pickerItem?.loadTransferable(type: Data.self)
+                imagesList.append(selectedImage)
+            }
+        }
     }
 }
 
