@@ -28,10 +28,18 @@ struct ContentView: View {
                     ForEach(peopleList, id: \.self){ person in
                         NavigationLink{
                             Text(person.name)
-                        }label: {
+                                .font(.headline)
                             Image(uiImage: UIImage(data: person.photo!)!)
                                 .resizable()
                                 .scaledToFit()
+                        }label: {
+                            HStack{
+                                Image(uiImage: UIImage(data: person.photo!)!)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 100, height: 100)
+                                Text(person.name)
+                            }
                         }
                     }
                 }
