@@ -46,6 +46,8 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $askName) {
+            Text("Name")
+                .font(.title)
             Form{
                 TextField("Name", text: $newPerson.name)
             }
