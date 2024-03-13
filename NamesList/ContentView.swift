@@ -22,22 +22,36 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            PhotosPicker("Select a picture", selection: $pickerItem, matching: .images)
-            List{
-                ForEach(peopleList, id: \.self){ person in
-                    Image(uiImage: UIImage(data: person.photo!)!)
-                        .resizable()
-                        .scaledToFit()
+            NavigationStack{
+                PhotosPicker("Select a picture", selection: $pickerItem, matching: .images)
+                List{
+                    ForEach(peopleList, id: \.self){ person in
+                        NavigationLink{
+                            Text(person.name)
+                        }label: {
+                            Image(uiImage: UIImage(data: person.photo!)!)
+                                .resizable()
+                                .scaledToFit()
+                        }
+                    }
                 }
+            }
+        }
+        .sheet(isPresented: $askName) {
+            Form{
+                TextField("Name", text: $newPerson.name)
+            }
+            Button("Close"){
+                askName = false
+                peopleList.append(newPerson)
+                newPerson.name = ""
             }
         }
         .onChange(of: pickerItem) {
             Task{
+                askName = true
                 selectedImage = try await pickerItem?.loadTransferable(type: Data.self)
                 newPerson.photo = selectedImage
-                peopleList.append(newPerson)
-                askName = true
-                
             }
         }
         
