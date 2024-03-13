@@ -7,26 +7,40 @@
 import PhotosUI
 import SwiftUI
 
+struct Person: Hashable {
+    var name: String = ""
+    var photo: Data?
+    
+}
+
 struct ContentView: View {
     @State private var pickerItem: PhotosPickerItem?
     @State private var selectedImage: Data?
-    @State private var imagesList = [Data?]()
+    @State private var peopleList = [Person]()
+    @State private var askName = false
+    @State private var newPerson = Person()
     
     var body: some View {
         VStack {
             PhotosPicker("Select a picture", selection: $pickerItem, matching: .images)
-            ForEach(imagesList, id: \.self){ photo in
-                Image(uiImage: UIImage(data: photo!)!)
-                    .resizable()
-                    .scaledToFit()
+            List{
+                ForEach(peopleList, id: \.self){ person in
+                    Image(uiImage: UIImage(data: person.photo!)!)
+                        .resizable()
+                        .scaledToFit()
+                }
             }
         }
         .onChange(of: pickerItem) {
             Task{
                 selectedImage = try await pickerItem?.loadTransferable(type: Data.self)
-                imagesList.append(selectedImage)
+                newPerson.photo = selectedImage
+                peopleList.append(newPerson)
+                askName = true
+                
             }
         }
+        
     }
 }
 
